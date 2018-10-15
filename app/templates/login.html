@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+
+
+{% block login %}
+
+
+ <div class="container">
+
+
+    <h1>Sign In</h1>
+
+    
+    <form class="form-signin" method="post" novalidate>
+      {{ form.hidden_tag() }}
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <label for="username" class="sr-only">Username</label>
+        <input type="text" id="username" class="form-control" placeholder="Username" required autofocus>
+        {% for error in form.username.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        {% for error in form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+  </div>
+{% endblock %}
