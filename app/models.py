@@ -2,8 +2,11 @@ from app import db
 from datetime import datetime
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+from app import login
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__= 'user'
     id = Column(Integer, primary_key=True)
     name = Column(String(256), nullable=False)
@@ -13,8 +16,13 @@ class User(db.Model):
     password_hash = Column(String(128))
 
     def __repr__(self):
-        return '<User {}>'.format(self.name)    
+        return '<User {}>'.format(self.name)   
 
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password) 
 
 
 class Category(db.Model):
@@ -29,7 +37,6 @@ class Category(db.Model):
 
 
 
-
 class Item(db.Model):
     __tablename__= 'item'
     id = Column(Integer, primary_key=True)
@@ -40,3 +47,10 @@ class Item(db.Model):
 
     def __repr__(self):
         return '<Item {}>'.format(self.title)
+
+
+
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))

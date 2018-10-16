@@ -1,14 +1,20 @@
 {% extends "auth_base.html" %}
 
-{% block signin %}
+{% block signup %}
 <form action="#" method="POST">
   {{form.hidden_tag()}}
-    
+    <div class="form-group">
+        <label for="username">Name</label>
+        <input class="form-control" type="text" name="name" id="name" placeholder="Full Name" required />
+      </div>
     <div class="form-group">
       <label for="username">Username</label>
       <input class="form-control" type="text" name="username" id="username" placeholder="Username" required />
     </div>
-    
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input class="form-control" type="text" name="email" id="email" placeholder="Email Address" required />
+    </div>
     <div class="form-group">
       <label for="password">Password</label>
       <input class="form-control" type="password" name="password" id="password" placeholder="********" required />
@@ -16,11 +22,11 @@
     
     <div class="m-t-lg">
       <ul class="list-inline">
-          <li>
-              <input class="btn btn--form" type="submit" value="Login" />
-          </li>
         <li>
-          <a class="signup__link" href="{{url_for('register')}}">Not a member?</a>
+          <input class="btn btn--form" type="submit" value="Register" />
+        </li>
+        <li>
+          <a class="signup__link" href="{{url_for('login')}}">I am already a member</a>
         </li>
       </ul>
     </div>
