@@ -1,4 +1,5 @@
-from app import app, db
+from app import app 
+from app import db
 from flask import render_template, flash, url_for, redirect, request
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
@@ -9,7 +10,7 @@ from werkzeug.urls import url_parse
 @app.route('/index')
 @login_required
 def index():
-    user = {'username': 'Saney'}
+    
     catalogs = [
         {
             'name': 'Soccer',
@@ -20,7 +21,7 @@ def index():
             'description': 'Popular game in Asia!'
         }
     ]
-    return render_template('index.html', title = 'Home Page', user=user, catalogs=catalogs)
+    return render_template('index.html', title = 'Home Page', catalogs=catalogs)
 
 ## =============================  Login Management System ==================================
 
