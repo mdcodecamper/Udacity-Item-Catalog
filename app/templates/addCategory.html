@@ -1,0 +1,26 @@
+{% extends "auth_base.html" %}
+
+{% block add_category %}
+
+<form action="#" method="POST">
+  {{form.hidden_tag()}}
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input class="form-control" type="text" name="name" id="name" placeholder="Ctaegory Name" required />
+      </div>
+    <div class="form-group">
+      <label for="description">Username</label>
+      <input class="form-control" type="textarea" name="desc" id="desc" placeholder="Description"  />
+    </div>
+    
+    <div class="m-t-lg">
+      <ul class="list-inline">
+        <li>
+          <input class="btn btn--form" type="submit" value="Add" />
+          <input class="btn btn--form" type="submit" value="Cancel" />
+        </li>        
+      </ul>
+    </div>
+  </form>
+
+{% endblock %}

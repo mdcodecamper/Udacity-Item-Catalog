@@ -40,7 +40,7 @@
       </li>
 
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="nav-link dropdown-toggle" href="{{url_for('category', categories=categories)}}" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Catalog
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -67,7 +67,9 @@
   </div>
    </nav>
 
+   
    <div class="signup__container">
+     
       <div class="container__child signup__thumbnail">
         <div class="thumbnail__logo">
           <svg class="logo__shape" width="25px" viewBox="0 0 634 479" xmlns="http://www.w3.org/2000/svg">
@@ -86,14 +88,22 @@
       </div>
       <div class="container__child signup__form">
     
+
         {% block signup %}
         {% endblock %}
 
         {% block signin %}
         {% endblock %}
+
+        {% block add_category %}
+        {% endblock %}
+
+        {% block category_list %}
+        {% endblock %}
     
       </div>
     </div>
+    
 
     {% block footer %}
        <!-- Footer -->
