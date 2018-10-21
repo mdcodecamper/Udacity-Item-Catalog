@@ -1,4 +1,4 @@
-{% extends "auth_base.html" %}
+{% extends "base/auth_base.html" %}
 
 {% block add_category %}
 
@@ -6,18 +6,18 @@
   {{form.hidden_tag()}}
     <div class="form-group">
         <label for="name">Name</label>
-        <input class="form-control" type="text" name="name" id="name" placeholder="Ctaegory Name" required />
+        <input class="form-control" type="text" name="name" id="name" placeholder="Category Name" required />
       </div>
     <div class="form-group">
-      <label for="description">Username</label>
-      <input class="form-control" type="textarea" name="desc" id="desc" placeholder="Description"  />
+      <label for="description">Description</label>
+      <textarea class="form-control" name="description" id="description" placeholder="Description"></textarea>
     </div>
     
     <div class="m-t-lg">
       <ul class="list-inline">
         <li>
           <input class="btn btn--form" type="submit" value="Add" />
-          <input class="btn btn--form" type="submit" value="Cancel" />
+          <a class="btn btn--form" id="cancel" name="cancel" href="{{url_for('category')}}">Cancel </a>
         </li>        
       </ul>
     </div>

@@ -1,27 +1,15 @@
 from app import app 
 from app import db
 from flask import render_template, flash, url_for, redirect, request
-from app.forms import LoginForm, RegistrationForm, CategoryForm
+from app.forms import LoginForm, RegistrationForm, CategoryForm, EditCategoryForm, DeleteCategoryForm
 from app.models import User, Category, Item
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 
 @app.route('/')
 @app.route('/index')
-@login_required
 def index():
-    
-    catalogs = [
-        {
-            'name': 'Soccer',
-            'description': 'Popular game in Europe!'
-        },
-        {
-            'name': 'Cricket',
-            'description': 'Popular game in Asia!'
-        }
-    ]
-    return render_template('index.html', title = 'Home Page', catalogs=catalogs)
+    return render_template('index.html', title = 'Home Page')
 
 ## =============================  Login Management System ==================================
 
@@ -37,7 +25,7 @@ def register():
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
+    return render_template('auth/register.html', title='Register', form=form)
 
 
 
@@ -56,7 +44,7 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('auth/login.html', title='Sign In', form=form)
 
 
 @app.route('/logout')
@@ -68,10 +56,15 @@ def logout():
 ## =============================  Category Module ==================================
 
 @app.route('/category/new', methods=['GET', 'POST'])
+@login_required
 def addCategory():
     if current_user.is_authenticated:
-        categories = Category.query.all()
         form = CategoryForm()
+        hasCategory = Category.query.filter_by(name=form.name.data).first()
+        if hasCategory is not None:
+            flash('Category is already exists.')
+            return render_template('category/addCategory.html', title='Add Category', form=form)
+
         if form.validate_on_submit():
             category = Category(name=form.name.data, description=form.description.data)
             db.session.add(category)
@@ -80,12 +73,43 @@ def addCategory():
             return redirect(url_for('category'))
         elif form.cancel.data == True:
             return redirect(url_for('category'))
-    return render_template('addCategory.html', title='Add Category', form=form)
+    return render_template('category/addCategory.html', title='Add Category', form=form)
+
+
+
+@app.route('/category/<int:category_id>/edit', methods=['GET', 'POST'])
+@login_required
+def editCategory(category_id):
+    if current_user.is_authenticated:
+        editedCategory = Category.query.filter_by(id=category_id).first()
+        form = EditCategoryForm()
+        if form.validate_on_submit():
+            if request.form['name']:
+                editedCategory.name = form.name.data
+            if request.form['description']:    
+                editedCategory.description = form.description.data
+                editCategory.shortDescription = form.description.data[:100]
+            db.session.add(editedCategory)
+            db.session.commit()
+            flash('Successfully Edited the Category!')
+            return redirect(url_for('category'))
+    return render_template('category/editCategory.html', title='Edit Category', editedCategory=editedCategory, form=form)
+
+
+@app.route('/category/<int:category_id>/delete', methods=['GET', 'POST'])
+@login_required
+def deleteCategory(category_id):
+    if current_user.is_authenticated:
+        categoryToDelete = Category.query.filter_by(id=category_id).first()
+        db.session.delete(categoryToDelete)
+        db.session.commit()
+        flash('Successfully Deleted the Category!')
+        return redirect(url_for('category'))
+    return render_template('category/deleteCategory.html', title='Delete Category', categoryToDelete = categoryToDelete)
+        
 
 
 @app.route('/category/', methods=['GET'])
 def category():
-    if current_user.is_authenticated:
-        categories = Category.query.all()
-        return render_template('categoryList.html', categories = categories)
-    return redirect(url_for('login'))
+    categories = Category.query.all()
+    return render_template('category/categoryList.html', categories = categories)

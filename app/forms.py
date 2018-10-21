@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from wtforms.validators import DataRequired
-from app.models import User
+from app.models import User, Category
 
 
 class LoginForm(FlaskForm):
@@ -34,4 +34,21 @@ class CategoryForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description')
     submit = SubmitField('Add ')
-    cancel = BooleanField('Cancel ')
+    cancel = SubmitField('Cancel ')
+  
+    def validate_category_name(self, name):
+        category = Category.query.filter_by(category=name.data).first()
+        if category is not None:
+            raise ValidationError('This category is already exist!!!')
+
+
+
+
+class EditCategoryForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    description = TextAreaField('Description',  validators=[Length(min=0, max=256)])
+    submit = SubmitField('Edit ')
+
+
+class DeleteCategoryForm(FlaskForm):
+    submit = SubmitField('Delete ')

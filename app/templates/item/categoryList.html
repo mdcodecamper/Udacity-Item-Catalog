@@ -1,0 +1,39 @@
+{% extends "base/base.html" %}
+
+  
+{% block category_list %}
+    <!-- Icons Grid -->
+    <section class="features-icons bg-light text-center">
+      <div class="container">
+        <div class="row">
+
+          {% if (categories == []) %}
+            <h1>No Category present at the moment...</h1>
+          {% endif %}
+         
+          {% for category in categories %} 
+          <div class="col-lg-4">
+            <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
+              <div class="features-icons-icon d-flex">
+                <i class="icon-screen-desktop m-auto text-primary"></i>
+              </div>
+              <h3>{{category.name}}</h3>
+              <p class="lead mb-0">{{category.description}}</p>
+            </div>
+            <ul class="list-inline">
+              <li>
+                <a class="btn btn btn-outline-info my-2 my-sm-0" href="#">View Details</a>
+              {% if current_user.is_authenticated %}  
+                <a class="btn btn btn-outline-warning my-2 my-sm-0" href="{{url_for('editCategory', category_id=category.id)}}">Edit</a>
+                <a class="btn btn btn-outline-danger my-2 my-sm-0" href="{{url_for('deleteCategory', category_id=category.id)}}">Delete</a>
+              {% endif %}
+              </li>        
+            </ul>
+          </div>
+
+          {% endfor %}
+          
+        </div>
+      </div>
+    </section>
+{% endblock %}

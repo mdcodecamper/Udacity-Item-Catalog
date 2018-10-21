@@ -1,0 +1,12 @@
+{% extends "base/auth_base.html" %}
+
+{% block add_category %}
+
+<h1 class="muted">Are you sure you want to delete <strong class="red">{{categoryToDelete.name}}</strong>?</h1><br>
+<form action="#" method="POST">
+  {{form.hidden_tag()}}
+  <button class="btn btn-outline-danger btn-lg " type="button" id="submit" type="submit" href="{{ url_for('category') }}">Delete</button>
+  <a class="btn btn-outline-danger btn-lg " role="button" href="{{ url_for('category') }}">Cancel</a>
+  </form>
+
+{% endblock %}
