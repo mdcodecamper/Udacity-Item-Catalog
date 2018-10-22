@@ -1,0 +1,36 @@
+{% extends "base/base.html" %}
+
+
+{% block category_latest %}
+
+    <header class="masthead text-white text-center">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">  
+                <div class="col-xs-3 text-center col-sm-3" >
+                    <h2 id="connect">Category</h2> 
+                    <div class="list-group">
+                        {% for category in categories %} 
+                            <a href="{{url_for('item', category_name= category.name)}}" class="list-group-item list-group-item-action"> {{category.name}} </a>
+                        {% endfor %}
+                      </div>
+                </div>            
+           
+                <div class="col-xs-6 text-center col-sm-6">
+                    <h2 id="connect">Latest Items</h2>
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action">
+                          Cras justo odio
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">Dapibus ac facilisis in</a>
+                        <a href="#" class="list-group-item list-group-item-action">Morbi leo risus</a>
+                        <a href="#" class="list-group-item list-group-item-action">Porta ac consectetur ac</a>
+                        <a href="#" class="list-group-item list-group-item-action disabled">Vestibulum at eros</a>
+                      </div>
+                </div>  
+            </div>
+          </div>
+        </div>
+      </header>
+
+{% endblock %}

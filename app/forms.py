@@ -52,3 +52,10 @@ class EditCategoryForm(FlaskForm):
 
 class DeleteCategoryForm(FlaskForm):
     submit = SubmitField('Delete ')
+
+
+class ItemForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    description = StringField('Description')
+    submit = SubmitField('Add ')
+    cancel = SubmitField('Cancel ')

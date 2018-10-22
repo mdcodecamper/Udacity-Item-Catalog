@@ -6,7 +6,7 @@
     <section class="features-icons bg-light text-center">
       <div class="container">
         <div class="row">
-
+             
           {% if (categories == []) %}
             <h1>No Category present at the moment...</h1>
 
@@ -16,27 +16,21 @@
           {% endif %}
          
           {% for category in categories %} 
-          <div class="col-lg-3">
-            <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
-              <div class="features-icons-icon d-flex">
-                <i class="icon-screen-desktop m-auto text-primary"></i>
-              </div>
-              <h3>{{category.name}}</h3>
-              <p class="lead mb-0">{{category.description}}</p>
-            </div>
-            <ul class="list-inline">
-              <li>
-                <a class="btn btn btn-outline-info my-2 my-sm-0" href="#">View Details</a>
-              {% if current_user.is_authenticated %}  
-                <a class="btn btn btn-outline-warning my-2 my-sm-0" href="{{url_for('editCategory', category_id=category.id)}}">Edit</a>
-                <a class="btn btn btn-outline-danger my-2 my-sm-0" href="{{url_for('deleteCategory', category_id=category.id)}}">Delete</a>
-              {% endif %}
-              </li>        
-            </ul>
-          </div>
+                <div class="col-lg-12 ">
+                  <div class="jumbotron">
+                    <h1 class="display-4">{{category.name}}</h1>
+                    <p class="lead">{{category.description}}</p>
+                    <hr class="my-4">
+                    <p class="lead">
+                      <a class="btn btn-info btn-lg" href="{{url_for('item', category_name=category.name)}}" role="button">View Items</a>
+                      <a class="btn btn-warning btn-lg" href="{{url_for('editCategory', category_name=category.name)}}" role="button">Edit</a>
+                      <a class="btn btn-danger btn-lg" href="#" role="button">Delete</a>
+                    </p>
+                  </div>
+                </div>
 
           {% endfor %}
-          
+           
         </div>
       </div>
     </section>

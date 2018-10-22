@@ -1,7 +1,7 @@
 from app import app 
 from app import db
 from flask import render_template, flash, url_for, redirect, request
-from app.forms import LoginForm, RegistrationForm, CategoryForm, EditCategoryForm, DeleteCategoryForm
+from app.forms import LoginForm, RegistrationForm, CategoryForm, EditCategoryForm, DeleteCategoryForm, ItemForm
 from app.models import User, Category, Item
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -54,8 +54,19 @@ def logout():
 
 
 ## =============================  Category Module ==================================
+@app.route('/catalog/categories', methods=['GET'])
+def category():
+    categories = Category.query.all()
+    return render_template('category/categoryList.html', categories = categories)
 
-@app.route('/category/new', methods=['GET', 'POST'])
+
+@app.route('/catalog/category-latest', methods=['GET'])
+def categoryLatest():
+    categories = Category.query.all()
+    return render_template('category/categoryLatest.html', categories = categories)
+    
+
+@app.route('/catalog/category/new', methods=['GET', 'POST'])
 @login_required
 def addCategory():
     if current_user.is_authenticated:
@@ -77,30 +88,29 @@ def addCategory():
 
 
 
-@app.route('/category/<int:category_id>/edit', methods=['GET', 'POST'])
+@app.route('/catalog/category/<string:category_name>/edit', methods=['GET', 'POST'])
 @login_required
-def editCategory(category_id):
+def editCategory(category_name):
     if current_user.is_authenticated:
-        editedCategory = Category.query.filter_by(id=category_id).first()
+        editedCategory = Category.query.filter_by(name=category_name).first()
         form = EditCategoryForm()
         if form.validate_on_submit():
             if request.form['name']:
                 editedCategory.name = form.name.data
             if request.form['description']:    
                 editedCategory.description = form.description.data
-                editCategory.shortDescription = form.description.data[:100]
             db.session.add(editedCategory)
             db.session.commit()
             flash('Successfully Edited the Category!')
             return redirect(url_for('category'))
-    return render_template('category/editCategory.html', title='Edit Category', editedCategory=editedCategory, form=form)
+    return render_template('category/editCategory.html', title='Edit Category', editedCategory=editedCategory, category_name=editedCategory.name, form=form)
 
 
-@app.route('/category/<int:category_id>/delete', methods=['GET', 'POST'])
+@app.route('/catalog/category/<string:category_name>/delete', methods=['GET', 'POST'])
 @login_required
-def deleteCategory(category_id):
+def deleteCategory(category_name):
     if current_user.is_authenticated:
-        categoryToDelete = Category.query.filter_by(id=category_id).first()
+        categoryToDelete = Category.query.filter_by(name=category_name).first()
         db.session.delete(categoryToDelete)
         db.session.commit()
         flash('Successfully Deleted the Category!')
@@ -109,7 +119,35 @@ def deleteCategory(category_id):
         
 
 
-@app.route('/category/', methods=['GET'])
-def category():
+## =============================  Item Module ==================================
+
+@app.route('/catalog/<string:category_name>/items', methods=['GET'])
+def item(category_name):
     categories = Category.query.all()
-    return render_template('category/categoryList.html', categories = categories)
+    category = Category.query.filter_by(name=category_name).one()
+    items = Item.query.filter_by(id=category.id).all()
+    return render_template('item/itemList.html', items= items, categories=categories)
+    
+
+@app.route('/catalog/<string:category_name>/items/<int:item_id>', methods=['GET'])
+def itemDetails(category_name, item_id):
+    category = Category.query.filter_by(name=category_name).one()
+    items = Item.query.filter_by(id=category.id).all()
+    return render_template('item/itemDetails.html', category = category, items= items)
+    
+
+@app.route('/catalog/<string:category_name>/item/new', methods=['GET', 'POST'])
+@login_required
+def addItem(category_name):
+    if current_user.is_authenticated:
+        category = Category.query.filter_by(name=category_name).one()
+        form = ItemForm()
+        if form.validate_on_submit():
+            item = Item(title=form.name.data, description=form.description.data, category_id=category.id)
+            db.session.add(item)
+            db.session.commit()
+            flash('Successfully Added the Item!')
+            return redirect(url_for('item', category_name=category_name))
+        elif form.cancel.data == True:
+            return redirect(url_for('item', category_name=category_name))
+    return render_template('item/addItem.html', title='Add Item', form=form, category_name=category.name)
