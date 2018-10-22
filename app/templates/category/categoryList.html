@@ -22,9 +22,11 @@
                     <p class="lead">{{category.description}}</p>
                     <hr class="my-4">
                     <p class="lead">
-                      <a class="btn btn-info btn-lg" href="{{url_for('item', category_name=category.name)}}" role="button">View Items</a>
-                      <a class="btn btn-warning btn-lg" href="{{url_for('editCategory', category_name=category.name)}}" role="button">Edit</a>
-                      <a class="btn btn-danger btn-lg" href="#" role="button">Delete</a>
+                      <a class="btn btn-info btn-lg" href="{{url_for('item', category_id=category.id)}}" role="button">View Items</a>
+                      {% if current_user.is_authenticated %}  
+                        <a class="btn btn-warning btn-lg" href="{{url_for('editCategory', category_name=category.name)}}" role="button">Edit</a>
+                        <a class="btn btn-danger btn-lg" href="{{url_for('deleteCategory', category_name=category.name)}}" role="button">Delete</a>
+                      {% endif %}
                     </p>
                   </div>
                 </div>

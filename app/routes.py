@@ -121,33 +121,65 @@ def deleteCategory(category_name):
 
 ## =============================  Item Module ==================================
 
-@app.route('/catalog/<string:category_name>/items', methods=['GET'])
-def item(category_name):
+@app.route('/catalog/<int:category_id>/items', methods=['GET'])
+def item(category_id):
     categories = Category.query.all()
-    category = Category.query.filter_by(name=category_name).one()
+    category = Category.query.filter_by(id=category_id).one()
     items = Item.query.filter_by(id=category.id).all()
-    return render_template('item/itemList.html', items= items, categories=categories)
+    return render_template('item/itemList.html', items= items, categories=categories, category = category)
     
 
-@app.route('/catalog/<string:category_name>/items/<int:item_id>', methods=['GET'])
-def itemDetails(category_name, item_id):
-    category = Category.query.filter_by(name=category_name).one()
+@app.route('/catalog/<int:category_id>/items/<int:item_id>', methods=['GET'])
+def itemDetails(category_id, item_id):
+    category = Category.query.filter_by(id=category_id).one()
     items = Item.query.filter_by(id=category.id).all()
     return render_template('item/itemDetails.html', category = category, items= items)
     
 
-@app.route('/catalog/<string:category_name>/item/new', methods=['GET', 'POST'])
+@app.route('/catalog/<int:category_id>/item/new', methods=['GET', 'POST'])
 @login_required
-def addItem(category_name):
+def addItem(category_id):
     if current_user.is_authenticated:
-        category = Category.query.filter_by(name=category_name).one()
+        category = Category.query.filter_by(id=category_id).one()
         form = ItemForm()
         if form.validate_on_submit():
             item = Item(title=form.name.data, description=form.description.data, category_id=category.id)
             db.session.add(item)
             db.session.commit()
             flash('Successfully Added the Item!')
-            return redirect(url_for('item', category_name=category_name))
+            return redirect(url_for('item', category_id=category_id))
         elif form.cancel.data == True:
-            return redirect(url_for('item', category_name=category_name))
-    return render_template('item/addItem.html', title='Add Item', form=form, category_name=category.name)
+            return redirect(url_for('item', category_id=category_id))
+    return render_template('item/addItem.html', title='Add Item', form=form, category=category)
+
+
+@app.route('/catalog/<int:category_id>/<int:item_id>/edit', methods=['GET', 'POST'])
+@login_required
+def editItem(category_id, item_id):
+    if current_user.is_authenticated:
+        category = Category.query.filter_by(id=category_id).first()
+        editedItem = Item.query.filter_by(category_id=category.id).one()
+        form = ItemForm()
+        if form.validate_on_submit():
+            if request.form['name']:
+                editedItem.title = form.name.data
+            if request.form['description']:    
+                editedItem.description = form.description.data
+            db.session.add(editedItem)
+            db.session.commit()
+            flash('Successfully Edited the Item!')
+            return redirect(url_for('item', category_id=category_id))
+    return render_template('item/editItem.html', title='Edit Item', editedItem=editedItem, category_id=category.id, form=form)
+
+
+@app.route('/catalog/<int:category_id>/<int:item_id>/delete', methods=['GET', 'POST'])
+@login_required
+def deleteItem(category_id, item_id):
+    if current_user.is_authenticated:
+        category = Category.query.filter_by(id=category_id).first()
+        itemToDelete = Item.query.filter_by(category_id=category.id).one()
+        db.session.delete(itemToDelete)
+        db.session.commit()
+        flash('Successfully Deleted the Item!')
+        return redirect(url_for('item', category_id=category_id))
+    return render_template('item/deleteItem.html', title='Delete Item', itemToDelete = itemToDelete)
